@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import logo from "./assets/img/logoc.jpg";
 
 class PageWrapper extends Component {
   render() {
@@ -11,7 +12,7 @@ class PageWrapper extends Component {
         >
           <div className="container">
             <Link className="navbar-brand js-scroll-trigger" to="/home">
-              <img src="assets/img/navbar-logo.svg" alt="" />
+              <img src={logo} alt="" className="logo" />
             </Link>
             <button
               className="navbar-toggler navbar-toggler-right"
