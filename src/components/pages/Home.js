@@ -7,7 +7,7 @@ import Footer from "../common/footer";
 import Team from "../common/Team";
 import Timeline from "../common/Timeline";
 
-import image from "../assets/back.jpg";
+import image from "../assets/img/3.jpg";
 
 class Home extends Component {
   render() {

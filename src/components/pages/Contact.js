@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-
 import Field from "../common/field";
+import { withFormik } from "formik";
+import * as Yup from "yup";
 
 const fields = {
   sections: [
@@ -9,52 +10,33 @@ const fields = {
         name: "name",
         elementName: "input",
         type: "text",
-        id: "name",
         placeholder: "Your good name",
       },
       {
         name: "email",
         elementName: "input",
-        type: "email",
-        id: "name",
+        type: "text",
         placeholder: "Your email",
       },
       {
         name: "phone",
         elementName: "input",
         type: "text",
-        id: "name",
         placeholder: "Your phone number",
       },
     ],
     [
       {
-        name: "msg",
+        name: "message",
         elementName: "textarea",
         type: "text",
-        id: "name",
-        placeholder: "Type your message",
+        placeholder: "Type your message *",
       },
     ],
   ],
 };
 
 class Contact extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: "",
-      email: "",
-      phone: "",
-      msg: "",
-    };
-  }
-
-  submtForm = (e) => {
-    e.preventDefault();
-    alert("Thankyouy !! Sumbitted your request successfuly.");
-  };
   render() {
     return (
       <section className="page-section" id="contact">
@@ -67,9 +49,9 @@ class Contact extends Component {
           </div>
           <form
             id="contactForm"
-            onSubmit={(e) => this.submtForm(e)}
+            onSubmit={this.props.handleSubmit}
             name="sentMessage"
-            novalidate="novalidate"
+            noValidate="novalidate"
           >
             <div className="row align-items-stretch mb-5">
               {fields.sections.map((section, sectionindex) => {
@@ -80,12 +62,12 @@ class Contact extends Component {
                         <Field
                           {...field}
                           key={i}
-                          value={this.state[field.name]}
-                          onChange={(e) =>
-                            this.setState({
-                              [field.name]: e.target.value,
-                            })
-                          }
+                          value={this.props.values[field.name]}
+                          name={field.name}
+                          onChange={this.props.handleChange}
+                          onBlur={this.props.handleBlur}
+                          touched={this.props.touched[field.name]}
+                          errors={this.props.errors[field.name]}
                         />
                       );
                     })}
@@ -103,11 +85,54 @@ class Contact extends Component {
                 </button>
               </div>
             </div>
-            s
           </form>
         </div>
       </section>
     );
   }
 }
-export default Contact;
+export default withFormik({
+  mapPropsToValues: () => ({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  }),
+
+  // validate: (values) => {
+  //   const errors = {};
+
+  //   Object.keys(values).map((v) => {
+  //     if (!values[v]) {
+  //       errors[v] = "Required";
+  //     }
+  //   });
+  //   return errors;
+  // },
+
+  /* Validation using yup*/
+  validationSchema: Yup.object().shape({
+    name: Yup.string()
+      .min(3, "Come on bre. Your name is longer ")
+      .max(8, "less")
+      .required("You must give us your name"),
+
+    email: Yup.string()
+      .email("Not a valid email")
+      .required("We need your email"),
+
+    phone: Yup.string()
+      .min(10, "Please provide your 10-digit phone number")
+      .max(15, "Your phone number is too long")
+      .required("We need your phone number to reach you"),
+
+    message: Yup.string()
+      .max(150, "Not more than 150 characters")
+      .required("Please mention your query, so that we can solve that"),
+  }),
+
+  handleSubmit: (values, { setSubmitting }) => {
+    console.log("Values: ", values);
+    alert("You have submitted successfully");
+  },
+})(Contact);
